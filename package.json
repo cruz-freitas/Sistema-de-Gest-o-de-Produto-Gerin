@@ -1,0 +1,17 @@
+{
+  "name": "gerin-estoque",
+  "version": "1.0.0",
+  "description": "Sistema web de gerenciamento de estoque",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server",
+    "build": "echo 'No build needed'"
+  },
+  "keywords": ["estoque", "gerenciamento", "inventário"],
+  "author": "Você",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/nome-do-repo.git"
+  }
+}

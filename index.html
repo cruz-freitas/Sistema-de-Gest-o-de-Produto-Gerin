@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Gerin - Gerenciamento de Estoque</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>GERIN</h1>
+                <p>Gestão de Estoque</p>
+            </div>
+            <nav class="menu">
+                <button class="menu-btn active" data-section="dashboard">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </button>
+                <button class="menu-btn" data-section="produtos">
+                    <span class="icon">📦</span>
+                    <span>Produtos</span>
+                </button>
+                <button class="menu-btn" data-section="movimentacoes">
+                    <span class="icon">📋</span>
+                    <span>Movimentações</span>
+                </button>
+                <button class="menu-btn" data-section="balanco">
+                    <span class="icon">⚖️</span>
+                    <span>Balanço</span>
+                </button>
+                <button class="menu-btn" data-section="lista-compras">
+                    <span class="icon">🛒</span>
+                    <span>Lista de Compras</span>
+                </button>
+                <button class="menu-btn" data-section="backup">
+                    <span class="icon">💾</span>
+                    <span>Backup</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <!-- Dashboard -->
+            <section id="dashboard" class="section active">
+                <h2>Dashboard</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Total de Produtos</h3>
+                        <p class="card-value" id="totalProdutos">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Itens em Estoque</h3>
+                        <p class="card-value" id="totalItens">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Valor Total (Custo)</h3>
+                        <p class="card-value" id="valorTotal">R$ 0,00</p>
+                    </div>
+                    <div class="card alert">
+                        <h3>Estoque Baixo</h3>
+                        <p class="card-value" id="estoqueBaixo">0</p>
+                    </div>
+                </div>
+
+                <div class="section-container">
+                    <h3>Últimas 5 Movimentações</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Tipo</th>
+                                <th>Quantidade</th>
+                                <th>Data</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ultimasMovimentacoes">
+                            <tr><td colspan="5" class="empty">Nenhuma movimentação registrada</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Produtos -->
+            <section id="produtos" class="section">
+                <h2>Produtos</h2>
+                <div class="section-header">
+                    <button id="btnNovoProduto" class="btn btn-primary">+ Novo Produto</button>
+                    <div class="search-container">
+                        <input type="text" id="pesquisaProduto" placeholder="Buscar por nome...">
+                        <select id="filtroCategoria">
+                            <option value="">Todas as categorias</option>
+                            <option value="Cerveja">Cerveja</option>
+                            <option value="Refrigerante">Refrigerante</option>
+                            <option value="Whisky">Whisky</option>
+                            <option value="Energético">Energético</option>
+                            <option value="Salgados">Salgados</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Custo</th>
+                            <th>Venda</th>
+                            <th>Estoque</th>
+                            <th>Mínimo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaProdutos">
+                        <tr><td colspan="8" class="empty">Nenhum produto cadastrado</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Movimentações -->
+            <section id="movimentacoes" class="section">
+                <h2>Movimentações de Estoque</h2>
+                
+                <div class="section-container">
+                    <h3>Registrar Movimentação</h3>
+                    <form id="formMovimentacao" class="form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="movProduto">Produto:</label>
+                                <select id="movProduto" required>
+                                    <option value="">Selecione um produto</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="movTipo">Tipo:</label>
+                                <select id="movTipo" required>
+                                    <option value="Entrada">Entrada</option>
+                                    <option value="Saída">Saída</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="movQuantidade">Quantidade:</label>
+                                <input type="number" id="movQuantidade" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="movObservacao">Observação:</label>
+                                <input type="text" id="movObservacao" placeholder="Opcional">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrar Movimentação</button>
+                    </form>
+                </div>
+
+                <div class="section-container">
+                    <h3>Histórico de Movimentações</h3>
+                    <div class="filters">
+                        <input type="date" id="filtroData">
+                        <select id="filtroMovTipo">
+                            <option value="">Todos os tipos</option>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Saída">Saída</option>
+                            <option value="Ajuste de Inventário">Ajuste de Inventário</option>
+                        </select>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Tipo</th>
+                                <th>Quantidade</th>
+                                <th>Data</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaMovimentacoes">
+                            <tr><td colspan="5" class="empty">Nenhuma movimentação registrada</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Balanço -->
+            <section id="balanco" class="section">
+                <h2>Balanço e Levantamento de Estoque</h2>
+                
+                <div class="section-container">
+                    <h3>Contagem Física</h3>
+                    <button id="btnIniciarContagem" class="btn btn-primary">Iniciar Contagem</button>
+                    <button id="btnConcluirContagem" class="btn btn-secondary" style="display:none;">Concluir Contagem</button>
+                    
+                    <table class="table" id="tabelaBalanco">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Estoque Registrado</th>
+                                <th>Estoque Contado</th>
+                                <th>Divergência</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaBalncoBody">
+                            <tr><td colspan="4" class="empty">Nenhum produto cadastrado</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section-container" id="containerResumoBalanco" style="display:none;">
+                    <h3>Resumo da Contagem</h3>
+                    <p id="resumoBalanco"></p>
+                </div>
+            </section>
+
+            <!-- Lista de Compras -->
+            <section id="lista-compras" class="section">
+                <h2>Lista de Compras Automática</h2>
+                <button id="btnGerarLista" class="btn btn-primary">Gerar Lista</button>
+                <button id="btnExportarLista" class="btn btn-secondary">Exportar Lista</button>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Estoque Atual</th>
+                            <th>Estoque Mínimo</th>
+                            <th>Sugestão de Reposição</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaListaCompras">
+                        <tr><td colspan="4" class="empty">Gere uma lista para visualizar</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Backup -->
+            <section id="backup" class="section">
+                <h2>Backup de Dados</h2>
+                <div class="backup-container">
+                    <div class="backup-card">
+                        <h3>Exportar Dados</h3>
+                        <p>Baixe um arquivo com todos os dados do sistema</p>
+                        <button id="btnExportarBackup" class="btn btn-primary">Salvar Backup</button>
+                    </div>
+                    <div class="backup-card">
+                        <h3>Importar Dados</h3>
+                        <p>Restaure dados de um backup anterior</p>
+                        <input type="file" id="inputImportar" accept=".txt" style="display:none;">
+                        <button id="btnImportarBackup" class="btn btn-primary">Importar Backup</button>
+                    </div>
+                </div>
+                <div id="statusBackup"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Novo/Editar Produto -->
+    <div id="modalProduto" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitulo">Novo Produto</h2>
+            <form id="formProduto" class="form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodNome">Nome:</label>
+                        <input type="text" id="prodNome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodCategoria">Categoria:</label>
+                        <select id="prodCategoria" required>
+                            <option value="">Selecione</option>
+                            <option value="Cerveja">Cerveja</option>
+                            <option value="Refrigerante">Refrigerante</option>
+                            <option value="Whisky">Whisky</option>
+                            <option value="Energético">Energético</option>
+                            <option value="Salgados">Salgados</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodCusto">Valor de Custo (R$):</label>
+                        <input type="number" id="prodCusto" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodVenda">Valor de Venda (R$):</label>
+                        <input type="number" id="prodVenda" min="0" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodQuantidade">Quantidade em Estoque:</label>
+                        <input type="number" id="prodQuantidade" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodMinimo">Estoque Mínimo:</label>
+                        <input type="number" id="prodMinimo" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="prodDescricao">Descrição:</label>
+                        <textarea id="prodDescricao" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="prodDetalhes">Detalhes Adicionais:</label>
+                        <textarea id="prodDetalhes" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="prodFoto">URL da Foto:</label>
+                        <input type="url" id="prodFoto" placeholder="https://exemplo.com/imagem.jpg">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Salvar Produto</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
