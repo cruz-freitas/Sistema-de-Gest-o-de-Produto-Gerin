@@ -5,12 +5,10 @@ class StorageManager {
   return null
   return true
   return false
-  adicionarProduto(produto): Produtos
   Date(): new
   Date(): new
   Date(): new
   Date(): new
-  exportarDados(): Geral
   Error(inválida'): new
   StorageManager(): new
   upadateDashboard(): Dashboard
@@ -18,12 +16,11 @@ class StorageManager {
   abrirModalProduto(null): Produtos
   Date(mov.data): new
   Date(mov.data): new
-  gerarListaCompras(): Compras
-  exportarBackup(): Backup
   Date(): new
   FileReader(): new
   Error(inválido'): new
   Error(backup'): new
+  App(): new
   App(): new
 }
 @enduml

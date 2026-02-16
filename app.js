@@ -31,7 +31,6 @@ class StorageManager {
         localStorage.setItem('gestao_estoque_data', JSON.stringify(this.data));
     }
 
-    // Produtos
     adicionarProduto(produto) {
         produto.id = this.generateId();
         produto.dataCadastro = new Date().toISOString();
@@ -64,7 +63,6 @@ class StorageManager {
         return this.data.produtos.find(p => p.id === id);
     }
 
-    // Movimentações
     adicionarMovimentacao(movimentacao) {
         movimentacao.data = new Date().toISOString();
         this.data.movimentacoes.push(movimentacao);
@@ -75,7 +73,6 @@ class StorageManager {
         return this.data.movimentacoes;
     }
 
-    // Geral
     exportarDados() {
         return JSON.stringify(this.data, null, 2);
     }
@@ -106,108 +103,185 @@ class App {
     }
 
     init() {
+        console.log('Inicializando aplicação...');
         this.setupEventListeners();
         this.mostrarSecao('dashboard');
         this.upadateDashboard();
+        console.log('Aplicação inicializada com sucesso!');
     }
 
     setupEventListeners() {
-        // Menu
-        document.querySelectorAll('.menu-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const secao = btn.dataset.section;
-                document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                this.mostrarSecao(secao);
+        try {
+            // Menu
+            const menuBtns = document.querySelectorAll('.menu-btn');
+            console.log(`Encontrados ${menuBtns.length} botões de menu`);
+            
+            menuBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const secao = btn.dataset.section;
+                    document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    this.mostrarSecao(secao);
+                });
             });
-        });
 
-        // Produtos
-        document.getElementById('btnNovoProduto').addEventListener('click', () => this.abrirModalProduto());
-        document.getElementById('formProduto').addEventListener('submit', (e) => this.salvarProduto(e));
-        document.getElementById('btnCancelar').addEventListener('click', () => this.fecharModalProduto());
-        document.querySelector('.close').addEventListener('click', () => this.fecharModalProduto());
-        document.getElementById('pesquisaProduto').addEventListener('input', () => this.atualizarTabelaProdutos());
-        document.getElementById('filtroCategoria').addEventListener('change', () => this.atualizarTabelaProdutos());
-
-        // Movimentações
-        document.getElementById('formMovimentacao').addEventListener('submit', (e) => this.registrarMovimentacao(e));
-        document.getElementById('filtroData').addEventListener('change', () => this.atualizarTabelaMovimentacoes());
-        document.getElementById('filtroMovTipo').addEventListener('change', () => this.atualizarTabelaMovimentacoes());
-
-        // Balanço
-        document.getElementById('btnIniciarContagem').addEventListener('click', () => this.iniciarContagem());
-        document.getElementById('btnConcluirContagem').addEventListener('click', () => this.concluirContagem());
-
-        // Lista de Compras
-        document.getElementById('btnGerarLista').addEventListener('click', () => this.gerarListaCompras());
-        document.getElementById('btnExportarLista').addEventListener('click', () => this.exportarLista());
-
-        // Backup
-        document.getElementById('btnExportarBackup').addEventListener('click', () => this.exportarBackup());
-        document.getElementById('btnImportarBackup').addEventListener('click', () => {
-            document.getElementById('inputImportar').click();
-        });
-        document.getElementById('inputImportar').addEventListener('change', (e) => this.importarBackup(e));
-
-        // Fechar modal clicando fora
-        window.addEventListener('click', (e) => {
-            const modal = document.getElementById('modalProduto');
-            if (e.target === modal) {
-                this.fecharModalProduto();
+            // Produtos
+            const btnNovoProduto = document.getElementById('btnNovoProduto');
+            if (btnNovoProduto) {
+                console.log('Botão Novo Produto encontrado');
+                btnNovoProduto.addEventListener('click', () => this.abrirModalProduto());
+            } else {
+                console.error('Botão Novo Produto NÃO encontrado!');
             }
-        });
+
+            const formProduto = document.getElementById('formProduto');
+            if (formProduto) {
+                formProduto.addEventListener('submit', (e) => this.salvarProduto(e));
+            }
+
+            const btnCancelar = document.getElementById('btnCancelar');
+            if (btnCancelar) {
+                btnCancelar.addEventListener('click', () => this.fecharModalProduto());
+            }
+
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => this.fecharModalProduto());
+            }
+
+            const pesquisaProduto = document.getElementById('pesquisaProduto');
+            if (pesquisaProduto) {
+                pesquisaProduto.addEventListener('input', () => this.atualizarTabelaProdutos());
+            }
+
+            const filtroCategoria = document.getElementById('filtroCategoria');
+            if (filtroCategoria) {
+                filtroCategoria.addEventListener('change', () => this.atualizarTabelaProdutos());
+            }
+
+            // Movimentações
+            const formMovimentacao = document.getElementById('formMovimentacao');
+            if (formMovimentacao) {
+                formMovimentacao.addEventListener('submit', (e) => this.registrarMovimentacao(e));
+            }
+
+            const filtroData = document.getElementById('filtroData');
+            if (filtroData) {
+                filtroData.addEventListener('change', () => this.atualizarTabelaMovimentacoes());
+            }
+
+            const filtroMovTipo = document.getElementById('filtroMovTipo');
+            if (filtroMovTipo) {
+                filtroMovTipo.addEventListener('change', () => this.atualizarTabelaMovimentacoes());
+            }
+
+            // Balanço
+            const btnIniciarContagem = document.getElementById('btnIniciarContagem');
+            if (btnIniciarContagem) {
+                btnIniciarContagem.addEventListener('click', () => this.iniciarContagem());
+            }
+
+            const btnConcluirContagem = document.getElementById('btnConcluirContagem');
+            if (btnConcluirContagem) {
+                btnConcluirContagem.addEventListener('click', () => this.concluirContagem());
+            }
+
+            // Lista de Compras
+            const btnGerarLista = document.getElementById('btnGerarLista');
+            if (btnGerarLista) {
+                btnGerarLista.addEventListener('click', () => this.gerarListaCompras());
+            }
+
+            const btnExportarLista = document.getElementById('btnExportarLista');
+            if (btnExportarLista) {
+                btnExportarLista.addEventListener('click', () => this.exportarLista());
+            }
+
+            // Backup
+            const btnExportarBackup = document.getElementById('btnExportarBackup');
+            if (btnExportarBackup) {
+                btnExportarBackup.addEventListener('click', () => this.exportarBackup());
+            }
+
+            const btnImportarBackup = document.getElementById('btnImportarBackup');
+            if (btnImportarBackup) {
+                btnImportarBackup.addEventListener('click', () => {
+                    document.getElementById('inputImportar').click();
+                });
+            }
+
+            const inputImportar = document.getElementById('inputImportar');
+            if (inputImportar) {
+                inputImportar.addEventListener('change', (e) => this.importarBackup(e));
+            }
+
+            // Fechar modal clicando fora
+            window.addEventListener('click', (e) => {
+                const modal = document.getElementById('modalProduto');
+                if (e.target === modal) {
+                    this.fecharModalProduto();
+                }
+            });
+
+            console.log('Event listeners configurados com sucesso');
+        } catch (error) {
+            console.error('Erro ao configurar event listeners:', error);
+        }
     }
 
-    // Seções
     mostrarSecao(secaoId) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        const secao = document.getElementById(secaoId);
-        if (secao) {
-            secao.classList.add('active');
-            
-            // Atualizar dados quando a seção é aberta
-            if (secaoId === 'dashboard') this.upadateDashboard();
-            else if (secaoId === 'produtos') this.atualizarTabelaProdutos();
-            else if (secaoId === 'movimentacoes') {
-                this.atualizarSelectProdutos();
-                this.atualizarTabelaMovimentacoes();
+        try {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const secao = document.getElementById(secaoId);
+            if (secao) {
+                secao.classList.add('active');
+                
+                // Atualizar dados quando a seção é aberta
+                if (secaoId === 'dashboard') this.upadateDashboard();
+                else if (secaoId === 'produtos') this.atualizarTabelaProdutos();
+                else if (secaoId === 'movimentacoes') {
+                    this.atualizarSelectProdutos();
+                    this.atualizarTabelaMovimentacoes();
+                }
+                else if (secaoId === 'balanco') this.atualizarTabelaBalanco();
             }
-            else if (secaoId === 'balanco') this.atualizarTabelaBalanco();
+        } catch (error) {
+            console.error('Erro ao mostrar seção:', error);
         }
     }
 
     // Dashboard
     upadateDashboard() {
-        const produtos = this.storage.getProdutos();
-        const movimentacoes = this.storage.getMovimentacoes();
+        try {
+            const produtos = this.storage.getProdutos();
+            const movimentacoes = this.storage.getMovimentacoes();
 
-        // Total de produtos
-        document.getElementById('totalProdutos').textContent = produtos.length;
+            document.getElementById('totalProdutos').textContent = produtos.length;
 
-        // Total de itens
-        const totalItens = produtos.reduce((sum, p) => sum + (parseInt(p.quantidade) || 0), 0);
-        document.getElementById('totalItens').textContent = totalItens.toLocaleString('pt-BR');
+            const totalItens = produtos.reduce((sum, p) => sum + (parseInt(p.quantidade) || 0), 0);
+            document.getElementById('totalItens').textContent = totalItens.toLocaleString('pt-BR');
 
-        // Valor total
-        const valorTotal = produtos.reduce((sum, p) => {
-            const custo = parseFloat(p.custo) || 0;
-            const quantidade = parseInt(p.quantidade) || 0;
-            return sum + (custo * quantidade);
-        }, 0);
-        document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            const valorTotal = produtos.reduce((sum, p) => {
+                const custo = parseFloat(p.custo) || 0;
+                const quantidade = parseInt(p.quantidade) || 0;
+                return sum + (custo * quantidade);
+            }, 0);
+            document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
 
-        // Estoque baixo
-        const estoqueBaixo = produtos.filter(p => parseInt(p.quantidade) <= parseInt(p.minimo)).length;
-        document.getElementById('estoqueBaixo').textContent = estoqueBaixo;
+            const estoqueBaixo = produtos.filter(p => parseInt(p.quantidade) <= parseInt(p.minimo)).length;
+            document.getElementById('estoqueBaixo').textContent = estoqueBaixo;
 
-        // Últimas 5 movimentações
-        const ultimasMovimentacoes = movimentacoes.slice(-5).reverse();
-        this.atualizarTabelaUltimas(ultimasMovimentacoes);
+            const ultimasMovimentacoes = movimentacoes.slice(-5).reverse();
+            this.atualizarTabelaUltimas(ultimasMovimentacoes);
+        } catch (error) {
+            console.error('Erro ao atualizar dashboard:', error);
+        }
     }
 
     atualizarTabelaUltimas(movimentacoes) {
         const tbody = document.getElementById('ultimasMovimentacoes');
+        if (!tbody) return;
+
         if (movimentacoes.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhuma movimentação registrada</td></tr>';
             return;
@@ -232,452 +306,544 @@ class App {
 
     // Produtos
     abrirModalProduto(produtoId = null) {
-        const modal = document.getElementById('modalProduto');
-        const titulo = document.getElementById('modalTitulo');
-        const form = document.getElementById('formProduto');
-        
-        form.reset();
-        this.editandoProdutoId = produtoId;
-
-        if (produtoId) {
-            titulo.textContent = 'Editar Produto';
-            const produto = this.storage.getProduto(produtoId);
-            if (produto) {
-                document.getElementById('prodNome').value = produto.nome;
-                document.getElementById('prodCategoria').value = produto.categoria;
-                document.getElementById('prodCusto').value = produto.custo;
-                document.getElementById('prodVenda').value = produto.venda;
-                document.getElementById('prodQuantidade').value = produto.quantidade;
-                document.getElementById('prodMinimo').value = produto.minimo;
-                document.getElementById('prodDescricao').value = produto.descricao || '';
-                document.getElementById('prodDetalhes').value = produto.detalhes || '';
-                document.getElementById('prodFoto').value = produto.foto || '';
+        try {
+            const modal = document.getElementById('modalProduto');
+            const titulo = document.getElementById('modalTitulo');
+            const form = document.getElementById('formProduto');
+            
+            if (!modal || !form) {
+                console.error('Modal ou form não encontrado!');
+                return;
             }
-        } else {
-            titulo.textContent = 'Novo Produto';
-        }
 
-        modal.classList.add('show');
+            form.reset();
+            this.editandoProdutoId = produtoId;
+
+            if (produtoId) {
+                titulo.textContent = 'Editar Produto';
+                const produto = this.storage.getProduto(produtoId);
+                if (produto) {
+                    document.getElementById('prodNome').value = produto.nome;
+                    document.getElementById('prodCategoria').value = produto.categoria;
+                    document.getElementById('prodCusto').value = produto.custo;
+                    document.getElementById('prodVenda').value = produto.venda;
+                    document.getElementById('prodQuantidade').value = produto.quantidade;
+                    document.getElementById('prodMinimo').value = produto.minimo;
+                    document.getElementById('prodDescricao').value = produto.descricao || '';
+                    document.getElementById('prodDetalhes').value = produto.detalhes || '';
+                    document.getElementById('prodFoto').value = produto.foto || '';
+                }
+            } else {
+                titulo.textContent = 'Novo Produto';
+            }
+
+            modal.classList.add('show');
+            console.log('Modal aberto com sucesso');
+        } catch (error) {
+            console.error('Erro ao abrir modal:', error);
+        }
     }
 
     fecharModalProduto() {
-        document.getElementById('modalProduto').classList.remove('show');
-        this.editandoProdutoId = null;
+        try {
+            const modal = document.getElementById('modalProduto');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+            this.editandoProdutoId = null;
+        } catch (error) {
+            console.error('Erro ao fechar modal:', error);
+        }
     }
 
     salvarProduto(e) {
-        e.preventDefault();
+        try {
+            e.preventDefault();
 
-        const produto = {
-            nome: document.getElementById('prodNome').value,
-            categoria: document.getElementById('prodCategoria').value,
-            custo: parseFloat(document.getElementById('prodCusto').value),
-            venda: parseFloat(document.getElementById('prodVenda').value),
-            quantidade: parseInt(document.getElementById('prodQuantidade').value),
-            minimo: parseInt(document.getElementById('prodMinimo').value),
-            descricao: document.getElementById('prodDescricao').value,
-            detalhes: document.getElementById('prodDetalhes').value,
-            foto: document.getElementById('prodFoto').value
-        };
+            const produto = {
+                nome: document.getElementById('prodNome').value,
+                categoria: document.getElementById('prodCategoria').value,
+                custo: parseFloat(document.getElementById('prodCusto').value),
+                venda: parseFloat(document.getElementById('prodVenda').value),
+                quantidade: parseInt(document.getElementById('prodQuantidade').value),
+                minimo: parseInt(document.getElementById('prodMinimo').value),
+                descricao: document.getElementById('prodDescricao').value,
+                detalhes: document.getElementById('prodDetalhes').value,
+                foto: document.getElementById('prodFoto').value
+            };
 
-        if (this.editandoProdutoId) {
-            this.storage.atualizarProduto(this.editandoProdutoId, produto);
-            this.mostrarToast('Produto atualizado com sucesso!', 'success');
-        } else {
-            this.storage.adicionarProduto(produto);
-            this.mostrarToast('Produto criado com sucesso!', 'success');
-        }
+            if (this.editandoProdutoId) {
+                this.storage.atualizarProduto(this.editandoProdutoId, produto);
+                this.mostrarToast('Produto atualizado com sucesso!', 'success');
+            } else {
+                this.storage.adicionarProduto(produto);
+                this.mostrarToast('Produto criado com sucesso!', 'success');
+            }
 
-        this.fecharModalProduto();
-        this.atualizarTabelaProdutos();
-        this.atualizarSelectProdutos();
-        this.upadateDashboard();
-    }
-
-    atualizarTabelaProdutos() {
-        const pesquisa = document.getElementById('pesquisaProduto').value.toLowerCase();
-        const categoria = document.getElementById('filtroCategoria').value;
-        const tbody = document.getElementById('tabelaProdutos');
-
-        let produtos = this.storage.getProdutos();
-
-        // Filtros
-        produtos = produtos.filter(p => {
-            const nomeCerca = p.nome.toLowerCase().includes(pesquisa);
-            const categoriaCerca = !categoria || p.categoria === categoria;
-            return nomeCerca && categoriaCerca;
-        });
-
-        if (produtos.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="empty">Nenhum produto encontrado</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = produtos.map(p => `
-            <tr>
-                <td>${p.id}</td>
-                <td>${p.nome}</td>
-                <td>${p.categoria}</td>
-                <td>R$ ${parseFloat(p.custo).toFixed(2).replace('.', ',')}</td>
-                <td>R$ ${parseFloat(p.venda).toFixed(2).replace('.', ',')}</td>
-                <td><strong>${p.quantidade}</strong></td>
-                <td>${p.minimo}</td>
-                <td>
-                    <div class="actions">
-                        <button class="action-btn edit-btn" onclick="app.abrirModalProduto(${p.id})">Editar</button>
-                        <button class="action-btn delete-btn" onclick="app.deletarProdutoConfirm(${p.id})">Deletar</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    deletarProdutoConfirm(id) {
-        if (confirm('Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita.')) {
-            this.storage.deletarProduto(id);
-            this.mostrarToast('Produto deletado com sucesso!', 'success');
+            this.fecharModalProduto();
             this.atualizarTabelaProdutos();
             this.atualizarSelectProdutos();
             this.upadateDashboard();
+        } catch (error) {
+            console.error('Erro ao salvar produto:', error);
+            this.mostrarToast('Erro ao salvar produto!', 'error');
         }
     }
 
-    // Movimentações
+    atualizarTabelaProdutos() {
+        try {
+            const pesquisa = document.getElementById('pesquisaProduto').value.toLowerCase();
+            const categoria = document.getElementById('filtroCategoria').value;
+            const tbody = document.getElementById('tabelaProdutos');
+
+            if (!tbody) return;
+
+            let produtos = this.storage.getProdutos();
+
+            produtos = produtos.filter(p => {
+                const nomeCerca = p.nome.toLowerCase().includes(pesquisa);
+                const categoriaCerca = !categoria || p.categoria === categoria;
+                return nomeCerca && categoriaCerca;
+            });
+
+            if (produtos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty">Nenhum produto encontrado</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = produtos.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.nome}</td>
+                    <td>${p.categoria}</td>
+                    <td>R$ ${parseFloat(p.custo).toFixed(2).replace('.', ',')}</td>
+                    <td>R$ ${parseFloat(p.venda).toFixed(2).replace('.', ',')}</td>
+                    <td><strong>${p.quantidade}</strong></td>
+                    <td>${p.minimo}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn edit-btn" onclick="app.abrirModalProduto(${p.id})">Editar</button>
+                            <button class="action-btn delete-btn" onclick="app.deletarProdutoConfirm(${p.id})">Deletar</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Erro ao atualizar tabela de produtos:', error);
+        }
+    }
+
+    deletarProdutoConfirm(id) {
+        try {
+            if (confirm('Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita.')) {
+                this.storage.deletarProduto(id);
+                this.mostrarToast('Produto deletado com sucesso!', 'success');
+                this.atualizarTabelaProdutos();
+                this.atualizarSelectProdutos();
+                this.upadateDashboard();
+            }
+        } catch (error) {
+            console.error('Erro ao deletar produto:', error);
+        }
+    }
+
     atualizarSelectProdutos() {
-        const select = document.getElementById('movProduto');
-        const produtos = this.storage.getProdutos();
-        
-        select.innerHTML = '<option value="">Selecione um produto</option>';
-        produtos.forEach(p => {
-            select.innerHTML += `<option value="${p.id}">${p.nome} (Est: ${p.quantidade})</option>`;
-        });
+        try {
+            const select = document.getElementById('movProduto');
+            if (!select) return;
+
+            const produtos = this.storage.getProdutos();
+            
+            select.innerHTML = '<option value="">Selecione um produto</option>';
+            produtos.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.nome} (Est: ${p.quantidade})</option>`;
+            });
+        } catch (error) {
+            console.error('Erro ao atualizar select produtos:', error);
+        }
     }
 
     registrarMovimentacao(e) {
-        e.preventDefault();
+        try {
+            e.preventDefault();
 
-        const produtoId = parseInt(document.getElementById('movProduto').value);
-        const tipo = document.getElementById('movTipo').value;
-        const quantidade = parseInt(document.getElementById('movQuantidade').value);
-        const observacao = document.getElementById('movObservacao').value;
+            const produtoId = parseInt(document.getElementById('movProduto').value);
+            const tipo = document.getElementById('movTipo').value;
+            const quantidade = parseInt(document.getElementById('movQuantidade').value);
+            const observacao = document.getElementById('movObservacao').value;
 
-        if (!produtoId || !tipo || !quantidade) {
-            this.mostrarToast('Preencha todos os campos obrigatórios', 'error');
-            return;
+            if (!produtoId || !tipo || !quantidade) {
+                this.mostrarToast('Preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            const produto = this.storage.getProduto(produtoId);
+            if (!produto) {
+                this.mostrarToast('Produto não encontrado', 'error');
+                return;
+            }
+
+            if (tipo === 'Saída' && (produto.quantidade - quantidade) < 0) {
+                this.mostrarToast(`Estoque insuficiente! Disponível: ${produto.quantidade}`, 'error');
+                return;
+            }
+
+            const novaQuantidade = tipo === 'Entrada' 
+                ? produto.quantidade + quantidade 
+                : produto.quantidade - quantidade;
+
+            this.storage.atualizarProduto(produtoId, { quantidade: novaQuantidade });
+
+            this.storage.adicionarMovimentacao({
+                produtoId,
+                tipo,
+                quantidade,
+                observacao
+            });
+
+            this.mostrarToast(`Movimentação de ${tipo.toLowerCase()} registrada com sucesso!`, 'success');
+            document.getElementById('formMovimentacao').reset();
+            this.atualizarSelectProdutos();
+            this.atualizarTabelaMovimentacoes();
+            this.upadateDashboard();
+        } catch (error) {
+            console.error('Erro ao registrar movimentação:', error);
+            this.mostrarToast('Erro ao registrar movimentação!', 'error');
         }
-
-        const produto = this.storage.getProduto(produtoId);
-        if (!produto) {
-            this.mostrarToast('Produto não encontrado', 'error');
-            return;
-        }
-
-        // Validar estoque negativo
-        if (tipo === 'Saída' && (produto.quantidade - quantidade) < 0) {
-            this.mostrarToast(`Estoque insuficiente! Disponível: ${produto.quantidade}`, 'error');
-            return;
-        }
-
-        // Atualizar estoque
-        const novaQuantidade = tipo === 'Entrada' 
-            ? produto.quantidade + quantidade 
-            : produto.quantidade - quantidade;
-
-        this.storage.atualizarProduto(produtoId, { quantidade: novaQuantidade });
-
-        // Registrar movimentação
-        this.storage.adicionarMovimentacao({
-            produtoId,
-            tipo,
-            quantidade,
-            observacao
-        });
-
-        this.mostrarToast(`Movimentação de ${tipo.toLowerCase()} registrada com sucesso!`, 'success');
-        document.getElementById('formMovimentacao').reset();
-        this.atualizarSelectProdutos();
-        this.atualizarTabelaMovimentacoes();
-        this.upadateDashboard();
     }
 
     atualizarTabelaMovimentacoes() {
-        const data = document.getElementById('filtroData').value;
-        const tipo = document.getElementById('filtroMovTipo').value;
-        const tbody = document.getElementById('tabelaMovimentacoes');
+        try {
+            const data = document.getElementById('filtroData').value;
+            const tipo = document.getElementById('filtroMovTipo').value;
+            const tbody = document.getElementById('tabelaMovimentacoes');
 
-        let movimentacoes = this.storage.getMovimentacoes();
+            if (!tbody) return;
 
-        // Filtros
-        movimentacoes = movimentacoes.filter(mov => {
-            const dataMovimento = new Date(mov.data).toISOString().split('T')[0];
-            const dataCerca = !data || dataMovimento === data;
-            const tipoCerca = !tipo || mov.tipo === tipo;
-            return dataCerca && tipoCerca;
-        });
+            let movimentacoes = this.storage.getMovimentacoes();
 
-        movimentacoes = movimentacoes.reverse();
+            movimentacoes = movimentacoes.filter(mov => {
+                const dataMovimento = new Date(mov.data).toISOString().split('T')[0];
+                const dataCerca = !data || dataMovimento === data;
+                const tipoCerca = !tipo || mov.tipo === tipo;
+                return dataCerca && tipoCerca;
+            });
 
-        if (movimentacoes.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhuma movimentação encontrada</td></tr>';
-            return;
+            movimentacoes = movimentacoes.reverse();
+
+            if (movimentacoes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhuma movimentação encontrada</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = movimentacoes.map(mov => {
+                const produto = this.storage.getProduto(mov.produtoId);
+                const nomeProduto = produto ? produto.nome : 'Produto desconhecido';
+                const data = new Date(mov.data).toLocaleDateString('pt-BR');
+                return `
+                    <tr>
+                        <td>${nomeProduto}</td>
+                        <td>${mov.tipo}</td>
+                        <td>${mov.quantidade}</td>
+                        <td>${data}</td>
+                        <td>${mov.observacao || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('Erro ao atualizar tabela movimentacoes:', error);
         }
-
-        tbody.innerHTML = movimentacoes.map(mov => {
-            const produto = this.storage.getProduto(mov.produtoId);
-            const nomeProduto = produto ? produto.nome : 'Produto desconhecido';
-            const data = new Date(mov.data).toLocaleDateString('pt-BR');
-            return `
-                <tr>
-                    <td>${nomeProduto}</td>
-                    <td>${mov.tipo}</td>
-                    <td>${mov.quantidade}</td>
-                    <td>${data}</td>
-                    <td>${mov.observacao || '-'}</td>
-                </tr>
-            `;
-        }).join('');
     }
 
-    // Balanço
     iniciarContagem() {
-        const produtos = this.storage.getProdutos();
-        if (produtos.length === 0) {
-            this.mostrarToast('Nenhum produto cadastrado', 'warning');
-            return;
+        try {
+            const produtos = this.storage.getProdutos();
+            if (produtos.length === 0) {
+                this.mostrarToast('Nenhum produto cadastrado', 'warning');
+                return;
+            }
+
+            this.contagemEmAndamento = true;
+            this.contagemDados = {};
+            this.atualizarTabelaBalanco();
+
+            document.getElementById('btnIniciarContagem').style.display = 'none';
+            document.getElementById('btnConcluirContagem').style.display = 'inline-block';
+            this.mostrarToast('Contagem iniciada! Preencha os campos para contar o estoque', 'info');
+        } catch (error) {
+            console.error('Erro ao iniciar contagem:', error);
         }
-
-        this.contagemEmAndamento = true;
-        this.contagemDados = {};
-        this.atualizarTabelaBalanco();
-
-        document.getElementById('btnIniciarContagem').style.display = 'none';
-        document.getElementById('btnConcluirContagem').style.display = 'inline-block';
-        this.mostrarToast('Contagem iniciada! Preencha os campos para contar o estoque', 'info');
     }
 
     atualizarTabelaBalanco() {
-        const produtos = this.storage.getProdutos();
-        const tbody = document.getElementById('tabelaBalncoBody');
+        try {
+            const produtos = this.storage.getProdutos();
+            const tbody = document.getElementById('tabelaBalncoBody');
 
-        if (produtos.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="empty">Nenhum produto cadastrado</td></tr>';
-            return;
+            if (!tbody) return;
+
+            if (produtos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty">Nenhum produto cadastrado</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = produtos.map(p => {
+                const estoquContado = this.contagemDados[p.id] !== undefined ? this.contagemDados[p.id] : '';
+                const divergencia = estoquContado !== '' ? Math.abs(p.quantidade - estoquContado) : '';
+                
+                return `
+                    <tr>
+                        <td>${p.nome}</td>
+                        <td>${p.quantidade}</td>
+                        <td>
+                            <input type="number" 
+                                   data-produto-id="${p.id}" 
+                                   class="contagem-input"
+                                   value="${estoquContado}"
+                                   ${this.contagemEmAndamento ? '' : 'disabled'}
+                                   onchange="app.atualizarContagemDados(this)">
+                        </td>
+                        <td>${divergencia ? `${divergencia} ${estoquContado < p.quantidade ? '-(falta)' : '+(sobra)'}` : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('Erro ao atualizar tabela balanço:', error);
         }
-
-        tbody.innerHTML = produtos.map(p => {
-            const estoquContado = this.contagemDados[p.id] !== undefined ? this.contagemDados[p.id] : '';
-            const divergencia = estoquContado !== '' ? Math.abs(p.quantidade - estoquContado) : '';
-            
-            return `
-                <tr>
-                    <td>${p.nome}</td>
-                    <td>${p.quantidade}</td>
-                    <td>
-                        <input type="number" 
-                               data-produto-id="${p.id}" 
-                               class="contagem-input"
-                               value="${estoquContado}"
-                               ${this.contagemEmAndamento ? '' : 'disabled'}
-                               onchange="app.atualizarContagemDados(this)">
-                    </td>
-                    <td>${divergencia ? `${divergencia} ${estoquContado < p.quantidade ? '-(falta)' : '+(sobra)'}` : '-'}</td>
-                </tr>
-            `;
-        }).join('');
     }
 
     atualizarContagemDados(input) {
-        const produtoId = parseInt(input.dataset.produtoId);
-        const valor = input.value ? parseInt(input.value) : undefined;
-        
-        if (valor !== undefined) {
-            this.contagemDados[produtoId] = valor;
+        try {
+            const produtoId = parseInt(input.dataset.produtoId);
+            const valor = input.value ? parseInt(input.value) : undefined;
+            
+            if (valor !== undefined) {
+                this.contagemDados[produtoId] = valor;
+            }
+            
+            this.atualizarTabelaBalanco();
+        } catch (error) {
+            console.error('Erro ao atualizar dados contagem:', error);
         }
-        
-        this.atualizarTabelaBalanco();
     }
 
     concluirContagem() {
-        const produtos = this.storage.getProdutos();
-        let divergencias = [];
+        try {
+            const produtos = this.storage.getProdutos();
+            let divergencias = [];
 
-        produtos.forEach(p => {
-            if (!(p.id in this.contagemDados)) return;
+            produtos.forEach(p => {
+                if (!(p.id in this.contagemDados)) return;
 
-            const estoquContado = this.contagemDados[p.id];
-            if (estoquContado !== p.quantidade) {
-                const diferenca = estoquContado - p.quantidade;
-                divergencias.push({
-                    produto: p,
-                    diferenca,
-                    novo: estoquContado
-                });
+                const estoquContado = this.contagemDados[p.id];
+                if (estoquContado !== p.quantidade) {
+                    const diferenca = estoquContado - p.quantidade;
+                    divergencias.push({
+                        produto: p,
+                        diferenca,
+                        novo: estoquContado
+                    });
 
-                // Registrar ajuste de inventário
-                this.storage.atualizarProduto(p.id, { quantidade: estoquContado });
-                this.storage.adicionarMovimentacao({
-                    produtoId: p.id,
-                    tipo: 'Ajuste de Inventário',
-                    quantidade: Math.abs(diferenca),
-                    observacao: `Ajuste de inventário: ${p.quantidade} → ${estoquContado}`
-                });
-            }
-        });
-
-        this.contagemEmAndamento = false;
-        document.getElementById('btnIniciarContagem').style.display = 'inline-block';
-        document.getElementById('btnConcluirContagem').style.display = 'none';
-
-        // Mostrar resumo
-        const resumoDiv = document.getElementById('containerResumoBalanco');
-        if (divergencias.length > 0) {
-            let resumoHtml = '<h4>Divergências Encontradas:</h4><ul>';
-            divergencias.forEach(d => {
-                resumoHtml += `<li>${d.produto.nome}: ${d.produto.quantidade} → ${d.novo} (${d.diferenca > 0 ? '+' : ''}${d.diferenca})</li>`;
+                    this.storage.atualizarProduto(p.id, { quantidade: estoquContado });
+                    this.storage.adicionarMovimentacao({
+                        produtoId: p.id,
+                        tipo: 'Ajuste de Inventário',
+                        quantidade: Math.abs(diferenca),
+                        observacao: `Ajuste de inventário: ${p.quantidade} → ${estoquContado}`
+                    });
+                }
             });
-            resumoHtml += '</ul>';
-            document.getElementById('resumoBalanco').innerHTML = resumoHtml;
-            resumoDiv.style.display = 'block';
-        } else {
-            document.getElementById('resumoBalanco').innerHTML = 'Nenhuma divergência encontrada! O estoque está conforme registrado.';
-            resumoDiv.style.display = 'block';
-        }
 
-        this.mostrarToast(`Contagem concluída! ${divergencias.length} divergência(s) encontrada(s)`, divergencias.length > 0 ? 'warning' : 'success');
-        this.atualizarTabelaBalanco();
-        this.atualizarTabelaMovimentacoes();
-        this.upadateDashboard();
+            this.contagemEmAndamento = false;
+            document.getElementById('btnIniciarContagem').style.display = 'inline-block';
+            document.getElementById('btnConcluirContagem').style.display = 'none';
+
+            const resumoDiv = document.getElementById('containerResumoBalanco');
+            if (divergencias.length > 0) {
+                let resumoHtml = '<h4>Divergências Encontradas:</h4><ul>';
+                divergencias.forEach(d => {
+                    resumoHtml += `<li>${d.produto.nome}: ${d.produto.quantidade} → ${d.novo} (${d.diferenca > 0 ? '+' : ''}${d.diferenca})</li>`;
+                });
+                resumoHtml += '</ul>';
+                document.getElementById('resumoBalanco').innerHTML = resumoHtml;
+                resumoDiv.style.display = 'block';
+            } else {
+                document.getElementById('resumoBalanco').innerHTML = 'Nenhuma divergência encontrada! O estoque está conforme registrado.';
+                resumoDiv.style.display = 'block';
+            }
+
+            this.mostrarToast(`Contagem concluída! ${divergencias.length} divergência(s) encontrada(s)`, divergencias.length > 0 ? 'warning' : 'success');
+            this.atualizarTabelaBalanco();
+            this.atualizarTabelaMovimentacoes();
+            this.upadateDashboard();
+        } catch (error) {
+            console.error('Erro ao concluir contagem:', error);
+        }
     }
 
-    // Lista de Compras
     gerarListaCompras() {
-        const produtos = this.storage.getProdutos();
-        const tbody = document.getElementById('tabelaListaCompras');
+        try {
+            const produtos = this.storage.getProdutos();
+            const tbody = document.getElementById('tabelaListaCompras');
 
-        const produtosParaComprar = produtos.filter(p => parseInt(p.quantidade) <= parseInt(p.minimo));
+            if (!tbody) return;
 
-        if (produtosParaComprar.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="empty">Todos os produtos estão com estoque adequado!</td></tr>';
-            return;
+            const produtosParaComprar = produtos.filter(p => parseInt(p.quantidade) <= parseInt(p.minimo));
+
+            if (produtosParaComprar.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty">Todos os produtos estão com estoque adequado!</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = produtosParaComprar.map(p => {
+                const sugestao = parseInt(p.minimo) * 2 - parseInt(p.quantidade);
+                return `
+                    <tr>
+                        <td>${p.nome}</td>
+                        <td>${p.quantidade}</td>
+                        <td>${p.minimo}</td>
+                        <td>${sugestao}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            this.mostrarToast(`${produtosParaComprar.length} produto(s) com estoque baixo!`, 'warning');
+        } catch (error) {
+            console.error('Erro ao gerar lista de compras:', error);
         }
-
-        tbody.innerHTML = produtosParaComprar.map(p => {
-            const sugestao = parseInt(p.minimo) * 2 - parseInt(p.quantidade);
-            return `
-                <tr>
-                    <td>${p.nome}</td>
-                    <td>${p.quantidade}</td>
-                    <td>${p.minimo}</td>
-                    <td>${sugestao}</td>
-                </tr>
-            `;
-        }).join('');
-
-        this.mostrarToast(`${produtosParaComprar.length} produto(s) com estoque baixo!`, 'warning');
     }
 
     exportarLista() {
-        const produtos = this.storage.getProdutos();
-        const produtosParaComprar = produtos.filter(p => parseInt(p.quantidade) <= parseInt(p.minimo));
+        try {
+            const produtos = this.storage.getProdutos();
+            const produtosParaComprar = produtos.filter(p => parseInt(p.quantidade) <= parseInt(p.minimo));
 
-        if (produtosParaComprar.length === 0) {
-            this.mostrarToast('Nenhum produto com estoque baixo para exportar', 'warning');
-            return;
+            if (produtosParaComprar.length === 0) {
+                this.mostrarToast('Nenhum produto com estoque baixo para exportar', 'warning');
+                return;
+            }
+
+            let conteudo = 'LISTA DE COMPRAS AUTOMÁTICA\n';
+            conteudo += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
+            conteudo += '='.repeat(60) + '\n\n';
+
+            produtosParaComprar.forEach(p => {
+                const sugestao = parseInt(p.minimo) * 2 - parseInt(p.quantidade);
+                conteudo += `Produto: ${p.nome}\n`;
+                conteudo += `Categoria: ${p.categoria}\n`;
+                conteudo += `Estoque Atual: ${p.quantidade}\n`;
+                conteudo += `Estoque Mínimo: ${p.minimo}\n`;
+                conteudo += `Sugestão de Reposição: ${sugestao}\n`;
+                conteudo += '-'.repeat(60) + '\n\n';
+            });
+
+            this.baixarArquivo(conteudo, 'lista-compras.txt');
+            this.mostrarToast('Lista de compras exportada!', 'success');
+        } catch (error) {
+            console.error('Erro ao exportar lista:', error);
+            this.mostrarToast('Erro ao exportar lista!', 'error');
         }
-
-        let conteudo = 'LISTA DE COMPRAS AUTOMÁTICA\n';
-        conteudo += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
-        conteudo += '='.repeat(60) + '\n\n';
-
-        produtosParaComprar.forEach(p => {
-            const sugestao = parseInt(p.minimo) * 2 - parseInt(p.quantidade);
-            conteudo += `Produto: ${p.nome}\n`;
-            conteudo += `Categoria: ${p.categoria}\n`;
-            conteudo += `Estoque Atual: ${p.quantidade}\n`;
-            conteudo += `Estoque Mínimo: ${p.minimo}\n`;
-            conteudo += `Sugestão de Reposição: ${sugestao}\n`;
-            conteudo += '-'.repeat(60) + '\n\n';
-        });
-
-        this.baixarArquivo(conteudo, 'lista-compras.txt');
-        this.mostrarToast('Lista de compras exportada!', 'success');
     }
 
-    // Backup
     exportarBackup() {
-        const dados = this.storage.exportarDados();
-        const backup = {
-            timestamp: new Date().toISOString(),
-            dados: JSON.parse(dados)
-        };
-        
-        const conteudo = JSON.stringify(backup, null, 2);
-        this.baixarArquivo(conteudo, 'backup-estoque.txt');
-        
-        const statusDiv = document.getElementById('statusBackup');
-        statusDiv.className = 'success';
-        statusDiv.textContent = '✓ Backup exportado com sucesso!';
-        this.mostrarToast('Backup salvo com sucesso!', 'success');
+        try {
+            const dados = this.storage.exportarDados();
+            const backup = {
+                timestamp: new Date().toISOString(),
+                dados: JSON.parse(dados)
+            };
+            
+            const conteudo = JSON.stringify(backup, null, 2);
+            this.baixarArquivo(conteudo, 'backup-estoque.txt');
+            
+            const statusDiv = document.getElementById('statusBackup');
+            statusDiv.className = 'success';
+            statusDiv.textContent = '✓ Backup exportado com sucesso!';
+            this.mostrarToast('Backup salvo com sucesso!', 'success');
+        } catch (error) {
+            console.error('Erro ao exportar backup:', error);
+            this.mostrarToast('Erro ao exportar backup!', 'error');
+        }
     }
 
     importarBackup(e) {
-        const arquivo = e.target.files[0];
-        if (!arquivo) return;
+        try {
+            const arquivo = e.target.files[0];
+            if (!arquivo) return;
 
-        const reader = new FileReader();
-        reader.onload = (evento) => {
-            try {
-                const conteudo = evento.target.result;
-                const backup = JSON.parse(conteudo);
-                
-                if (!backup.dados) {
-                    throw new Error('Arquivo de backup inválido');
-                }
+            const reader = new FileReader();
+            reader.onload = (evento) => {
+                try {
+                    const conteudo = evento.target.result;
+                    const backup = JSON.parse(conteudo);
+                    
+                    if (!backup.dados) {
+                        throw new Error('Arquivo de backup inválido');
+                    }
 
-                if (this.storage.importarDados(JSON.stringify(backup.dados))) {
+                    if (this.storage.importarDados(JSON.stringify(backup.dados))) {
+                        const statusDiv = document.getElementById('statusBackup');
+                        statusDiv.className = 'success';
+                        statusDiv.textContent = '✓ Backup importado com sucesso! Os dados foram restaurados.';
+                        this.mostrarToast('Backup restaurado com sucesso!', 'success');
+                        this.upadateDashboard();
+                        this.atualizarTabelaProdutos();
+                    } else {
+                        throw new Error('Erro ao processar o backup');
+                    }
+                } catch (erro) {
                     const statusDiv = document.getElementById('statusBackup');
-                    statusDiv.className = 'success';
-                    statusDiv.textContent = '✓ Backup importado com sucesso! Os dados foram restaurados.';
-                    this.mostrarToast('Backup restaurado com sucesso!', 'success');
-                    this.upadateDashboard();
-                    this.atualizarTabelaProdutos();
-                } else {
-                    throw new Error('Erro ao processar o backup');
+                    statusDiv.className = 'error';
+                    statusDiv.textContent = `✗ Erro ao importar backup: ${erro.message}`;
+                    this.mostrarToast('Erro ao importar backup', 'error');
                 }
-            } catch (erro) {
-                const statusDiv = document.getElementById('statusBackup');
-                statusDiv.className = 'error';
-                statusDiv.textContent = `✗ Erro ao importar backup: ${erro.message}`;
-                this.mostrarToast('Erro ao importar backup', 'error');
-            }
-        };
-        reader.readAsText(arquivo);
-        
-        // Limpar input
-        e.target.value = '';
+            };
+            reader.readAsText(arquivo);
+            
+            e.target.value = '';
+        } catch (error) {
+            console.error('Erro ao importar backup:', error);
+        }
     }
 
-    // Utilitários
     baixarArquivo(conteudo, nomeArquivo) {
-        const elemento = document.createElement('a');
-        elemento.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(conteudo));
-        elemento.setAttribute('download', nomeArquivo);
-        elemento.style.display = 'none';
-        document.body.appendChild(elemento);
-        elemento.click();
-        document.body.removeChild(elemento);
+        try {
+            const elemento = document.createElement('a');
+            elemento.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(conteudo));
+            elemento.setAttribute('download', nomeArquivo);
+            elemento.style.display = 'none';
+            document.body.appendChild(elemento);
+            elemento.click();
+            document.body.removeChild(elemento);
+        } catch (error) {
+            console.error('Erro ao baixar arquivo:', error);
+        }
     }
 
     mostrarToast(mensagem, tipo = 'info') {
-        const toast = document.getElementById('toast');
-        toast.textContent = mensagem;
-        toast.className = `toast show ${tipo}`;
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
+        try {
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.textContent = mensagem;
+                toast.className = `toast show ${tipo}`;
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Erro ao mostrar toast:', error);
+        }
     }
 }
 
-// Inicializar aplicação
-const app = new App();
+// Inicializar aplicação quando o DOM estiver pronto
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM carregado, inicializando app...');
+        window.app = new App();
+    });
+} else {
+    console.log('DOM já carregado, inicializando app...');
+    window.app = new App();
+}
